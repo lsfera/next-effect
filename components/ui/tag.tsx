@@ -48,7 +48,8 @@ function MyTag({ children, className, ref, ...props }: MyTagProps) {
 }
 
 interface MyTagGroupProps<T>
-  extends Omit<TagGroupProps, "children">,
+  extends
+    Omit<TagGroupProps, "children">,
     Pick<TagListProps<T>, "items" | "children" | "renderEmptyState"> {
   label?: string;
   labelClassName?: string;

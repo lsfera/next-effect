@@ -94,12 +94,8 @@
           "name": "accounts_user_id_users_id_fk",
           "tableFrom": "accounts",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -176,12 +172,8 @@
           "name": "sessions_user_id_users_id_fk",
           "tableFrom": "sessions",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -191,9 +183,7 @@
         "sessions_token_unique": {
           "name": "sessions_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
+          "columns": ["token"]
         }
       },
       "policies": {},
@@ -250,12 +240,8 @@
           "name": "tool_history_tool_id_tools_id_fk",
           "tableFrom": "tool_history",
           "tableTo": "tools",
-          "columnsFrom": [
-            "tool_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tool_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -263,12 +249,8 @@
           "name": "tool_history_user_id_users_id_fk",
           "tableFrom": "tool_history",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -395,12 +377,8 @@
           "name": "tools_submitted_by_users_id_fk",
           "tableFrom": "tools",
           "tableTo": "users",
-          "columnsFrom": [
-            "submitted_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["submitted_by"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -410,9 +388,7 @@
         "tools_slug_unique": {
           "name": "tools_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -521,9 +497,7 @@
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -586,31 +560,17 @@
     "public.admin_approval_status": {
       "name": "admin_approval_status",
       "schema": "public",
-      "values": [
-        "pending",
-        "approved",
-        "rejected",
-        "permanently_rejected"
-      ]
+      "values": ["pending", "approved", "rejected", "permanently_rejected"]
     },
     "public.pricing": {
       "name": "pricing",
       "schema": "public",
-      "values": [
-        "free",
-        "paid",
-        "freemium"
-      ]
+      "values": ["free", "paid", "freemium"]
     },
     "public.tool_history_event": {
       "name": "tool_history_event",
       "schema": "public",
-      "values": [
-        "submitted",
-        "updated",
-        "approved",
-        "rejected"
-      ]
+      "values": ["submitted", "updated", "approved", "rejected"]
     }
   },
   "schemas": {},
