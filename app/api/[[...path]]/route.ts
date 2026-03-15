@@ -21,9 +21,9 @@ const routes = app
   .route("/auth", auth)
   .route("/admin", admin);
 
-export const GET = handle(app);
-export const POST = handle(app);
-export const PUT = handle(app);
-export const DELETE = handle(app);
+export const GET = handle(routes);
+export const POST = handle(routes);
+export const PUT = handle(routes);
+export const DELETE = handle(routes);
 
 export type ApiRoutes = typeof routes;

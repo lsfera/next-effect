@@ -96,10 +96,13 @@ export function ToolSubmissionForm({
         });
       }
 
-      const { logo, showcaseImage, ...toolData } = data;
-
       yield* saveTool({
-        ...toolData,
+        name: data.name,
+        websiteUrl: data.websiteUrl,
+        tagline: data.tagline,
+        description: data.description,
+        categories: data.categories,
+        pricing: data.pricing,
         logoKey,
         showcaseImageKey,
         toolId: initialData?.id,

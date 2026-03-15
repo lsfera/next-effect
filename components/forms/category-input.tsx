@@ -203,7 +203,7 @@ export function CategoryInput<
                     >
                       <div className="flex w-full items-center justify-center gap-2">
                         <Plus className="size-4" />
-                        <span>Create "{categoryInput}"</span>
+                        <span>Create &quot;{categoryInput}&quot;</span>
                       </div>
                     </CommandItem>
                   </CommandGroup>

@@ -34,7 +34,7 @@ export function CategoryGrid({ categories, search }: CategoryGridProps) {
           transition={{ duration: 0.15, ease: "easeOut" }}
           className="mt-12 text-center text-sm"
         >
-          No categories found matching "{search}"
+          No categories found matching &quot;{search}&quot;
         </motion.p>
       </AnimatePresence>
     );

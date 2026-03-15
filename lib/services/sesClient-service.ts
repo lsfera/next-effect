@@ -6,17 +6,37 @@ export class SesClientService extends Effect.Service<SesClientService>()(
   "SesClient",
   {
     effect: Effect.gen(function* () {
-      const config = yield* Config.all({
-        region: Config.string("AWS_REGION"),
-        roleArn: Config.string("AWS_ROLE_ARN"),
-      });
+      const region = yield* Config.string("AWS_REGION").pipe(
+        Config.withDefault("us-east-1"),
+      );
+      const endpoint =
+        process.env.AWS_SES_ENDPOINT_URL ?? process.env.AWS_ENDPOINT_URL;
+
+      if (endpoint) {
+        return new SESClient({
+          region,
+          endpoint,
+          credentials: {
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID ?? "test",
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY ?? "test",
+          },
+        });
+      }
+
+      const roleArn = process.env.AWS_ROLE_ARN;
+
+      if (!roleArn) {
+        return new SESClient({
+          region,
+        });
+      }
 
       return new SESClient({
-        region: config.region,
+        region,
         credentials: awsCredentialsProvider({
-          roleArn: config.roleArn,
+          roleArn,
         }),
       });
     }),
   },
-) {}
+) { }

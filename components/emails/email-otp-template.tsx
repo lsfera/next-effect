@@ -1,8 +1,10 @@
-import { Html } from "@react-email/html";
-import { Tailwind } from "@react-email/tailwind";
-import { Text } from "@react-email/text";
+import { Html, Tailwind, Text } from "@react-email/components";
 
-export function EmailOtpTemplate(otp: string) {
+type EmailOtpTemplateProps = {
+  otp: string;
+};
+
+export function EmailOtpTemplate({ otp }: EmailOtpTemplateProps) {
   return (
     <Html>
       <Tailwind>

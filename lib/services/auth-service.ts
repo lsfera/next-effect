@@ -3,40 +3,60 @@ import { DbClientService } from "@/lib/services/dbClient-service";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { admin, emailOTP } from "better-auth/plugins";
-import { Config, Effect, Redacted } from "effect";
+import { Config, Effect } from "effect";
 
 const adminEmailsConfig = Config.array(Config.string(), "ADMIN_EMAILS").pipe(
+  Config.withDefault([]),
   Config.map((emails) => emails.map((email) => email.trim().toLowerCase())),
 );
+
+function getLocalTrustedOrigins(baseUrl: string): string[] {
+  const defaults = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:3001",
+  ];
+
+  return Array.from(new Set([baseUrl, ...defaults]));
+}
 
 export class AuthService extends Effect.Service<AuthService>()("AuthService", {
   effect: Effect.gen(function* () {
     const db = yield* DbClientService;
 
     const adminEmails = yield* adminEmailsConfig;
-
-    const googleClientId = Redacted.value(
-      yield* Config.redacted("GOOGLE_CLIENT_ID"),
-    );
-    const googleClientSecret = Redacted.value(
-      yield* Config.redacted("GOOGLE_CLIENT_SECRET"),
-    );
+    const baseUrl =
+      process.env.BETTER_AUTH_URL ??
+      process.env.NEXT_PUBLIC_BASE_URL ??
+      "http://localhost:3000";
+    const googleClientId = process.env.GOOGLE_CLIENT_ID;
+    const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+    const socialProviders =
+      googleClientId && googleClientSecret
+        ? {
+          google: {
+            clientId: googleClientId,
+            clientSecret: googleClientSecret,
+            prompt: "select_account" as const,
+            mapProfileToUser: (profile: {
+              given_name?: string;
+              family_name?: string;
+            }) => {
+              return {
+                firstName: profile.given_name,
+                lastName: profile.family_name,
+              };
+            },
+          },
+        }
+        : undefined;
 
     const auth = betterAuth({
+      baseURL: baseUrl,
+      trustedOrigins: getLocalTrustedOrigins(baseUrl),
       database: drizzleAdapter(db, { provider: "pg", usePlural: true }),
-      socialProviders: {
-        google: {
-          clientId: googleClientId,
-          clientSecret: googleClientSecret,
-          prompt: "select_account",
-          mapProfileToUser: (profile) => {
-            return {
-              firstName: profile.given_name,
-              lastName: profile.family_name,
-            };
-          },
-        },
-      },
+      socialProviders,
       plugins: [
         admin(),
         emailOTP({
@@ -95,7 +115,7 @@ export class AuthService extends Effect.Service<AuthService>()("AuthService", {
     return auth;
   }),
   dependencies: [DbClientService.Default],
-}) {}
+}) { }
 
 export type AuthType = {
   user: typeof AuthService.Service.$Infer.Session.user | null;

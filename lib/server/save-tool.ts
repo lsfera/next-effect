@@ -59,7 +59,7 @@ export function saveTool(body: saveToolPayload, user: User) {
       const [updatedTool] = yield* dbService.use((db) =>
         db.transaction(async (tx) => {
           // Build the update object dynamically with only the text fields first.
-          const fieldsToUpdate: Record<string, any> = {
+          const fieldsToUpdate: Partial<typeof tools.$inferInsert> = {
             name: body.name,
             websiteUrl: body.websiteUrl,
             tagline: body.tagline,

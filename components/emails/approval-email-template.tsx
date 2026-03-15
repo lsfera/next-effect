@@ -16,7 +16,7 @@ export function ApprovalEmailTemplate({
     >
       <Text className="text-base text-neutral-700">Hi,</Text>
       <Text className="text-base text-neutral-700">
-        I'm excited to let you know that your submission for{" "}
+        I&apos;m excited to let you know that your submission for{" "}
         <strong>{appName}</strong> has been reviewed and approved!
       </Text>
       <Text className="text-base text-neutral-700">

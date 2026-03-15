@@ -16,7 +16,7 @@ export function sendSignInOtpEmail(email: string, otp: string) {
     const emailFrom = yield* Config.string("EMAIL_FROM");
 
     const emailHtml = yield* Effect.tryPromise({
-      try: async () => await render(EmailOtpTemplate(otp)),
+      try: async () => await render(EmailOtpTemplate({ otp })),
       catch: (error) =>
         new EmailTemplateRenderError({
           operation: "sendSignInOtpEmail",

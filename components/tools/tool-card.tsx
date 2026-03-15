@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import type { Tool } from "@/db/schema";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 import Link from "next/link";
 
 const getPricingPillStyles = (pricing: Tool["pricing"]) => {
@@ -30,12 +31,11 @@ export function ToolCard({ tool }: { tool: Tool }) {
       {/* Card Header: Logo, Name, Tagline */}
       <div className="mb-4 flex items-start gap-4">
         {tool.logoUrl ? (
-          <img
+          <Image
             src={tool.logoUrl}
             alt={`${tool.name} logo`}
             width={48}
             height={48}
-            loading="eager"
             className="size-12 shrink-0 rounded-md object-contain"
           />
         ) : (

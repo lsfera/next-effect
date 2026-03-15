@@ -1,8 +1,102 @@
---statement
-ALTER TABLE "public"."sessions" ADD COLUMN "impersonated_by" text;
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 --> statement-breakpoint
-ALTER TABLE "public"."users" ADD COLUMN "banned" boolean DEFAULT false;
+CREATE TYPE "public"."admin_approval_status" AS ENUM('pending', 'approved', 'rejected', 'permanently_rejected');
 --> statement-breakpoint
-ALTER TABLE "public"."users" ADD COLUMN "ban_reason" text;
+CREATE TYPE "public"."pricing" AS ENUM('free', 'paid', 'freemium');
 --> statement-breakpoint
-ALTER TABLE "public"."users" ADD COLUMN "ban_expires" timestamp;
+CREATE TYPE "public"."tool_history_event" AS ENUM('submitted', 'updated', 'approved', 'rejected');
+--> statement-breakpoint
+CREATE TABLE "users" (
+	"id" text PRIMARY KEY NOT NULL,
+	"name" text NOT NULL,
+	"email" text NOT NULL,
+	"email_verified" boolean DEFAULT false NOT NULL,
+	"image" text,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"role" text DEFAULT 'user' NOT NULL,
+	"banned" boolean DEFAULT false,
+	"ban_reason" text,
+	"ban_expires" timestamp,
+	"first_name" text,
+	"last_name" text,
+	"submission_count" integer DEFAULT 0 NOT NULL,
+	CONSTRAINT "users_email_unique" UNIQUE("email")
+);
+--> statement-breakpoint
+CREATE TABLE "verifications" (
+	"id" text PRIMARY KEY NOT NULL,
+	"identifier" text NOT NULL,
+	"value" text NOT NULL,
+	"expires_at" timestamp NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "sessions" (
+	"id" text PRIMARY KEY NOT NULL,
+	"expires_at" timestamp NOT NULL,
+	"token" text NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp NOT NULL,
+	"ip_address" text,
+	"user_agent" text,
+	"user_id" text NOT NULL,
+	"impersonated_by" text,
+	CONSTRAINT "sessions_token_unique" UNIQUE("token")
+);
+--> statement-breakpoint
+CREATE TABLE "accounts" (
+	"id" text PRIMARY KEY NOT NULL,
+	"account_id" text NOT NULL,
+	"provider_id" text NOT NULL,
+	"user_id" text NOT NULL,
+	"access_token" text,
+	"refresh_token" text,
+	"id_token" text,
+	"access_token_expires_at" timestamp,
+	"refresh_token_expires_at" timestamp,
+	"scope" text,
+	"password" text,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "tools" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"name" text NOT NULL,
+	"slug" text NOT NULL,
+	"website_url" text NOT NULL,
+	"tagline" text NOT NULL,
+	"description" text NOT NULL,
+	"categories" text[] DEFAULT '{}'::text[] NOT NULL,
+	"pricing" "pricing" NOT NULL,
+	"logo_url" text,
+	"showcase_image_url" text NOT NULL,
+	"admin_approval_status" "admin_approval_status" DEFAULT 'pending' NOT NULL,
+	"submitted_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"submitted_by" text NOT NULL,
+	"approved_at" timestamp with time zone DEFAULT now(),
+	"rejection_count" integer DEFAULT 0 NOT NULL,
+	"bookmark_count" integer DEFAULT 0 NOT NULL,
+	CONSTRAINT "tools_slug_unique" UNIQUE("slug")
+);
+--> statement-breakpoint
+CREATE TABLE "tool_history" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"tool_id" uuid NOT NULL,
+	"user_id" text NOT NULL,
+	"event_type" "tool_history_event" NOT NULL,
+	"reason" text,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
+--> statement-breakpoint
+ALTER TABLE "accounts" ADD CONSTRAINT "accounts_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
+--> statement-breakpoint
+ALTER TABLE "tools" ADD CONSTRAINT "tools_submitted_by_users_id_fk" FOREIGN KEY ("submitted_by") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
+--> statement-breakpoint
+ALTER TABLE "tool_history" ADD CONSTRAINT "tool_history_tool_id_tools_id_fk" FOREIGN KEY ("tool_id") REFERENCES "public"."tools"("id") ON DELETE cascade ON UPDATE no action;
+--> statement-breakpoint
+ALTER TABLE "tool_history" ADD CONSTRAINT "tool_history_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;

@@ -12,6 +12,7 @@ import {
   getWebPVariantUrl,
   unslugify,
 } from "@/lib/utils";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 
 const getPricingPillStyles = (pricing: Tool["pricing"]) => {
@@ -59,12 +60,11 @@ export default async function ToolDetailsPage({
           <div className="flex-grow space-y-4">
             <div className="flex items-center gap-4">
               {tool.logoUrl ? (
-                <img
+                <Image
                   src={tool.logoUrl}
                   alt={`${tool.name} logo`}
                   width={48}
                   height={48}
-                  loading="eager"
                   className="size-12 shrink-0 rounded-md object-contain"
                 />
               ) : (

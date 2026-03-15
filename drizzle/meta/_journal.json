@@ -15,6 +15,13 @@
       "when": 1757612285912,
       "tag": "0001_worthless_overlord",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1773574847929,
+      "tag": "002_snapshot",
+      "breakpoints": true
     }
   ]
 }

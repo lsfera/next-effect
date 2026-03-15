@@ -11,7 +11,8 @@ export default function NotFound() {
         App Not Found
       </h2>
       <p className="mt-4 text-pretty text-neutral-700">
-        The app you're looking for could not be found or is no longer listed.
+        The app you&apos;re looking for could not be found or is no longer
+        listed.
       </p>
       <HoverLink href="/" className="mt-6">
         Return Home

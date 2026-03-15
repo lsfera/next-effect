@@ -2,8 +2,12 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { admin, emailOTP } from "better-auth/plugins";
 
+const placeholderDatabase = undefined as unknown as Parameters<
+  typeof drizzleAdapter
+>[0];
+
 export const auth = betterAuth({
-  database: drizzleAdapter(undefined as any, {
+  database: drizzleAdapter(placeholderDatabase, {
     provider: "pg",
     usePlural: true,
   }),
@@ -18,7 +22,7 @@ export const auth = betterAuth({
   plugins: [
     admin(),
     emailOTP({
-      async sendVerificationOTP({ email, otp }) {},
+      async sendVerificationOTP() {},
     }),
   ],
 

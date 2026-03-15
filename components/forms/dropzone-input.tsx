@@ -120,7 +120,7 @@ export function DropzoneInput<
         <input {...getInputProps()} />
         <PhotoIcon className="mb-2 size-10 text-neutral-300" />
         <p className="mb-4 text-sm text-neutral-700">
-          Drag 'n' drop file here or click to select file
+          Drag and drop a file here or click to select one
         </p>
         <p className="text-xs text-neutral-500">
           Supported file types: {supportedFileTypes.join(", ")}

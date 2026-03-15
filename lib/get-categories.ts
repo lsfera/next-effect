@@ -6,6 +6,10 @@ import { DatabaseService } from "@/lib/services/database-service";
 import { sql } from "drizzle-orm";
 import { Effect } from "effect";
 
+type CategoryRow = {
+  category: string;
+};
+
 export async function getCategories(search: string) {
   const program = Effect.gen(function* () {
     const dbService = yield* DatabaseService;
@@ -30,7 +34,7 @@ export async function getCategories(search: string) {
 
     // The raw result from `db.execute` is an array of objects, e.g., [{ category: 'AI' }].
     // We need to map this to a simple array of strings.
-    return result.map((row: any) => row.category as string);
+    return result.map((row) => (row as CategoryRow).category);
   });
 
   return await serverRuntime.runPromise(program);

@@ -6,17 +6,38 @@ export class S3ClientService extends Effect.Service<S3ClientService>()(
   "S3ClientService",
   {
     effect: Effect.gen(function* () {
-      const config = yield* Config.all({
-        region: Config.string("AWS_REGION"),
-        roleArn: Config.string("AWS_ROLE_ARN"),
-      });
+      const region = yield* Config.string("AWS_REGION").pipe(
+        Config.withDefault("us-east-1"),
+      );
+      const endpoint =
+        process.env.AWS_S3_ENDPOINT_URL ?? process.env.AWS_ENDPOINT_URL;
+
+      if (endpoint) {
+        return new S3Client({
+          region,
+          endpoint,
+          forcePathStyle: true,
+          credentials: {
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID ?? "test",
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY ?? "test",
+          },
+        });
+      }
+
+      const roleArn = process.env.AWS_ROLE_ARN;
+
+      if (!roleArn) {
+        return new S3Client({
+          region,
+        });
+      }
 
       return new S3Client({
-        region: config.region,
+        region,
         credentials: awsCredentialsProvider({
-          roleArn: config.roleArn,
+          roleArn,
         }),
       });
     }),
   },
-) {}
+) { }

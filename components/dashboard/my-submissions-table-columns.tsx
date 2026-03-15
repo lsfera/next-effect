@@ -129,7 +129,7 @@ export const MySubmissionsTableColumns = (hasRejectedSubmissions: boolean) => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              Rejection Reason for "{selectedSubmission?.name}"
+              Rejection Reason for &quot;{selectedSubmission?.name}&quot;
             </DialogTitle>
             <ScrollArea className="mt-4 max-h-64 pr-6">
               <DialogDescription className="text-base text-neutral-700">
