@@ -122,7 +122,7 @@ export function createShowcaseImageWebPVariants(showcaseImageKey: string) {
     const smWebPEffect = createWebPVariantEffect(breakpoints.sm);
     const mdWebPEffect = createWebPVariantEffect(breakpoints.md);
     const lgWebPEffect = createWebPVariantEffect(breakpoints.lg);
-    const xlWebPEffect = createWebPVariantEffect(breakpoints.lg);
+    const xlWebPEffect = createWebPVariantEffect(breakpoints.xl);
     const originalSizeWebPEffect = createWebPVariantEffect();
 
     const [
