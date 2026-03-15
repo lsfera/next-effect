@@ -15,6 +15,12 @@ class UserSessionNotFoundError extends Data.TaggedError(
   message: string;
 }> {}
 
+class CategoriesJsonParseError extends Data.TaggedError(
+  "CategoriesJsonParseError",
+)<{
+  message: string;
+}> {}
+
 const app = new Hono<{
   Variables: AuthType;
 }>()
@@ -29,14 +35,6 @@ const app = new Hono<{
     const user = ctx.get("user");
     const toolId = body.toolId as string | undefined;
 
-    const parseBody = {
-      ...body,
-      logo: body.logo === "undefined" ? undefined : body.logo,
-      showcaseImage:
-        body.showcaseImage === "undefined" ? undefined : body.showcaseImage,
-      categories: JSON.parse(body.categories as string),
-    } as ToolSubmissionFormSchemaType;
-
     const program = Effect.gen(function* () {
       if (!user)
         return yield* Effect.fail(
@@ -44,6 +42,22 @@ const app = new Hono<{
             message: "No active user session found.",
           }),
         );
+
+      const categories = yield* Effect.try({
+        try: () => JSON.parse(body.categories as string),
+        catch: () =>
+          new CategoriesJsonParseError({
+            message: "Invalid JSON value for categories field.",
+          }),
+      });
+
+      const parseBody = {
+        ...body,
+        logo: body.logo === "undefined" ? undefined : body.logo,
+        showcaseImage:
+          body.showcaseImage === "undefined" ? undefined : body.showcaseImage,
+        categories,
+      } as ToolSubmissionFormSchemaType;
 
       // Check if the image is required based on user role and edit mode
       const isAdminEditing = user.role === "admin" && !!toolId;
@@ -94,6 +108,17 @@ const app = new Hono<{
           error,
         ),
       ),
+      Effect.catchTag("CategoriesJsonParseError", (error) => {
+        return Effect.succeed(
+          ctx.json(
+            {
+              _tag: "ParseError",
+              issues: [{ path: ["categories"], message: error.message }],
+            },
+            { status: 400 },
+          ),
+        );
+      }),
       Effect.catchTag("ParseError", (error) => {
         const issues = ParseResult.ArrayFormatter.formatErrorSync(error);
         return Effect.succeed(
