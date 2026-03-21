@@ -113,7 +113,7 @@ const app = new Hono<{
           ctx.json(
             {
               _tag: "ParseError",
-              issues: [{ path: ["categories"], message: error.message }],
+              issues: [{ _tag: "ParseIssue", path: ["categories"], message: error.message }],
             },
             { status: 400 },
           ),

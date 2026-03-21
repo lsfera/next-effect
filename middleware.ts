@@ -5,7 +5,7 @@ const guestOnlyPaths = ["/signin"];
 const adminOnlyPaths = ["/submit/edit-success"];
 const protectedPaths = ["/submit", "/dashboard"];
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
     const path = request.nextUrl.pathname;
 
     const isOnGuestPath = guestOnlyPaths.some(

@@ -81,21 +81,15 @@ export function createShowcaseImageWebPVariants(showcaseImageKey: string) {
     // Step 2: Convert the homepage screenshot image stream to a byte array.
     const showcaseImageByteArray = yield* Effect.tryPromise({
       try: () => showcaseImageFile.Body!.transformToByteArray(),
-      catch: (error) => {
-        Effect.runSync(
-          Effect.logError("ImageStreamToByteArrayConversionError: ", error),
-        );
-        return new ImageStreamToByteArrayConversionError({
+      catch: (error) =>
+        new ImageStreamToByteArrayConversionError({
           message:
             "Failed to convert the showcase image stream (from S3) to byte array.",
           cause: error,
-        });
-      },
+        }),
     });
 
     const showcaseImageBuffer = Buffer.from(showcaseImageByteArray);
-
-    const sharpInstance = sharp(showcaseImageBuffer);
 
     // Step 3: Helper to create a WebP variant.
     const createWebPVariantEffect = (
@@ -104,17 +98,15 @@ export function createShowcaseImageWebPVariants(showcaseImageKey: string) {
     ) => {
       return Effect.tryPromise({
         try: () =>
-          sharpInstance
+          sharp(showcaseImageBuffer)
             .resize(width, null, { withoutEnlargement: true })
             .webp({ quality })
             .toBuffer(),
-        catch: (error) => {
-          Effect.runSync(Effect.logError("WebPConversionError:", error));
-          return new WebPConversionError({
+        catch: (error) =>
+          new WebPConversionError({
             message: "Failed to convert showcase image to WebP format.",
             cause: error,
-          });
-        },
+          }),
       });
     };
 

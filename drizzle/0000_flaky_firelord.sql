@@ -76,7 +76,7 @@ CREATE TABLE "tools" (
 	"admin_approval_status" "admin_approval_status" DEFAULT 'pending' NOT NULL,
 	"submitted_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"submitted_by" text NOT NULL,
-	"approved_at" timestamp with time zone DEFAULT now(),
+	"approved_at" timestamp with time zone,
 	"rejection_count" integer DEFAULT 0 NOT NULL,
 	"bookmark_count" integer DEFAULT 0 NOT NULL,
 	CONSTRAINT "tools_slug_unique" UNIQUE("slug")
